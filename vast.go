@@ -10,13 +10,14 @@ type Vast struct {
 	apiKey   string
 	endPoint string
 	Validate bool
+	client   *http.Client
 }
 
 // NewVast returns a new Vast instance
 // apiKey is the Vast API key
 // endPoint is the Vast API endpoint
 func NewVast(apiKey, endpoint string) *Vast {
-	return &Vast{apiKey: apiKey, endPoint: endpoint, Validate: true}
+	return &Vast{apiKey: apiKey, endPoint: endpoint, Validate: true, client: &http.Client{}}
 }
 
 func (v *Vast) GetSensor(p *Payload) (*Response, error) {
@@ -40,8 +41,7 @@ func (v *Vast) GetSensor(p *Payload) (*Response, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("apikey", v.apiKey)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := v.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
